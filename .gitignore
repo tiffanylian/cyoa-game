@@ -4,6 +4,10 @@ env/
 ENV/
 .venv
 
+# Flask
+flask_session/
+instance/
+
 # Python
 __pycache__/
 *.py[cod]

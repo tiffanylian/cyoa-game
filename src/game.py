@@ -46,8 +46,7 @@ LAST WORDS: "He's here... Thornfield Mansion... he's going to
 SUSPECT PROFILE:
 • Serial killer - Operating in region for 6 months
 • Confirmed victims: 4+ (possibly more)
-• Method: Home invasions at isolated properties
-• Pattern: Targets remote estates with minimal oversight
+• Method: Picking off victims at night, dragging them to remote estates, assaulting them, and leaving them to die.
 
 THORNFIELD MANSION - WHY HERE:
 • Abandoned for 10 years - perfect hunting ground
