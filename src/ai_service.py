@@ -78,7 +78,7 @@ Return ONLY the ASCII art, no explanation."""
         except Exception as e:
             return ""  # Return empty string if ASCII generation fails
 
-    def generate_image(self, scene_description: str) -> str:
+    def generate_image(self, scene_description: str) -> Optional[str]:
         """Generate an image using DALL-E based on scene description."""
         try:
             # Create a concise prompt for image generation
@@ -86,6 +86,7 @@ Return ONLY the ASCII art, no explanation."""
 Dark, cinematic, atmospheric horror. 
 No text or words in the image."""
             
+            print(f"[DALL-E] Requesting image generation with prompt: {image_prompt[:100]}...")
             response = self.client.images.generate(
                 model="dall-e-3",
                 prompt=image_prompt,
@@ -93,9 +94,14 @@ No text or words in the image."""
                 quality="standard",
                 n=1,
             )
-            return response.data[0].url
+            url = response.data[0].url
+            print(f"[DALL-E] Image generated successfully: {url[:50]}...")
+            return url
         except Exception as e:
-            # Return None if image generation fails
+            # Log and return None if image generation fails
+            import traceback
+            print(f"[DALL-E ERROR] {str(e)}")
+            traceback.print_exc()
             return None
 
 

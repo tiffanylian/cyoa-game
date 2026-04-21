@@ -20,6 +20,10 @@ Session(app)
 # Game instances per session
 games = {}
 
+# Enable debug logging
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 BRIEFING = """
 INCIDENT: Emergency 911 Call
 TIME: 11:47 PM
@@ -85,17 +89,16 @@ def start_game():
         # Initialize game
         opening_scene = game.initialize_game()
         
-        # Generate image for opening scene
-        image_url = game.generate_image_for_scene(opening_scene)
-        
         return jsonify({
             "success": True,
             "scene": opening_scene,
-            "image": image_url,
             "game_over": False,
             "outcome": None
         })
     except Exception as e:
+        print(f"[ERROR] start_game: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 
@@ -118,9 +121,6 @@ def process_action():
         # Process the action
         response = game.process_action(action)
         
-        # Generate image for this scene
-        image_url = game.generate_image_for_scene(response)
-        
         # Check if game ended
         game_over = game.game_over
         outcome = game.game_outcome
@@ -128,11 +128,13 @@ def process_action():
         return jsonify({
             "success": True,
             "scene": response,
-            "image": image_url,
             "game_over": game_over,
             "outcome": outcome
         })
     except Exception as e:
+        print(f"[ERROR] process_action: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 
