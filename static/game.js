@@ -70,7 +70,7 @@ async function startGame() {
         gameSection.style.display = 'flex';
         gameOverScreen.style.display = 'none';
         
-        displayScene(data.scene);
+        displayScene(data.scene, data.image);
         updateStats();
         
         // Enable input
@@ -125,7 +125,7 @@ async function submitAction(event) {
         
         // Clear and update scene
         actionInput.value = '';
-        displayScene(data.scene);
+        displayScene(data.scene, data.image);
         updateStats();
         
         // Check if game is over
@@ -185,7 +185,23 @@ async function restartGame() {
     }
 }
 
-function displayScene(sceneText) {
+function displayScene(sceneText, imageUrl) {
+    // Display image if available
+    const sceneImageDiv = document.getElementById('scene-image');
+    const sceneImg = document.getElementById('scene-img');
+    
+    if (imageUrl) {
+        sceneImg.src = imageUrl;
+        sceneImg.onload = function() {
+            sceneImageDiv.style.display = 'block';
+        };
+        sceneImg.onerror = function() {
+            sceneImageDiv.style.display = 'none';
+        };
+    } else {
+        sceneImageDiv.style.display = 'none';
+    }
+    
     // Sanitize and format the scene
     let formattedText = sceneText
         .replace(/\[GAME_OVER:.*?\]/gi, '') // Remove game over markers
@@ -193,9 +209,9 @@ function displayScene(sceneText) {
     
     sceneContent.textContent = formattedText;
     
-    // Scroll to bottom
+    // Scroll to top to show image first
     const scenePanel = document.querySelector('.scene-panel');
-    scenePanel.scrollTop = scenePanel.scrollHeight;
+    scenePanel.scrollTop = 0;
 }
 
 function updateStats() {

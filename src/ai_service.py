@@ -78,6 +78,26 @@ Return ONLY the ASCII art, no explanation."""
         except Exception as e:
             return ""  # Return empty string if ASCII generation fails
 
+    def generate_image(self, scene_description: str) -> str:
+        """Generate an image using DALL-E based on scene description."""
+        try:
+            # Create a concise prompt for image generation
+            image_prompt = f"""Horror game scene - {scene_description[:200]}. 
+Dark, cinematic, atmospheric horror. 
+No text or words in the image."""
+            
+            response = self.client.images.generate(
+                model="dall-e-3",
+                prompt=image_prompt,
+                size="1024x1024",
+                quality="standard",
+                n=1,
+            )
+            return response.data[0].url
+        except Exception as e:
+            # Return None if image generation fails
+            return None
+
 
 class ClaudeProvider(AIProvider):
     """Anthropic Claude API provider for story generation."""
@@ -263,6 +283,12 @@ NO vague atmosphere. NO "you sense danger." CONCRETE HORROR."""
     def generate_ascii_for_scene(self, scene_description: str) -> str:
         """Generate ASCII art for a scene description."""
         return self.provider.generate_ascii_art(scene_description)
+
+    def generate_image_for_scene(self, scene_description: str) -> Optional[str]:
+        """Generate a real image for a scene description."""
+        if hasattr(self.provider, 'generate_image'):
+            return self.provider.generate_image(scene_description)
+        return None
 
     def get_game_state_summary(self) -> Dict[str, Any]:
         """Get a summary of the current game state from the AI."""
