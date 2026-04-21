@@ -28,50 +28,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Blood splatter decorations */
-.blood-splatter {
-    position: fixed;
-    width: 120px;
-    height: 120px;
-    pointer-events: none;
-    filter: drop-shadow(0 0 8px rgba(196, 30, 58, 0.6));
-    z-index: 0;
-}
-
-.splatter-1 {
-    top: 80px;
-    right: 50px;
-    transform: rotate(25deg);
-    animation: float 6s ease-in-out infinite;
-}
-
-.splatter-2 {
-    top: 400px;
-    left: 40px;
-    width: 100px;
-    height: 100px;
-    transform: rotate(-15deg) scaleX(-1);
-    animation: float 8s ease-in-out infinite 1s;
-}
-
-.splatter-3 {
-    bottom: 200px;
-    right: 100px;
-    width: 90px;
-    height: 90px;
-    transform: rotate(45deg);
-    animation: float 7s ease-in-out infinite 0.5s;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(var(--rotation, 0deg)); opacity: 0.6; }
-    50% { transform: translateY(-10px) rotate(var(--rotation, 0deg)); opacity: 0.8; }
-}
-
-.splatter-1 { --rotation: 25deg; }
-.splatter-2 { --rotation: -15deg; }
-.splatter-3 { --rotation: 45deg; }
-
 /* Animated background effect */
 body::before {
     content: '';

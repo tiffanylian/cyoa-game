@@ -188,13 +188,17 @@ The game ends when ONE of these occurs:
 5. VICTIM_RESCUED: Player rescues the victim and escapes with them alive
 6. VICTIM_DEAD: Victim dies (killed by killer or can't be saved)
 
-When an end condition is met, IMMEDIATELY add ONE of these to your response:
-- If escaped: "[GAME_OVER: escaped]"
-- If player dies: "[GAME_OVER: player_dead]"
-- If killer dies: "[GAME_OVER: killer_dead]"
-- If killer restrained: "[GAME_OVER: killer_restrained]"
-- If victim rescued: "[GAME_OVER: victim_rescued]"
-- If victim dies: "[GAME_OVER: victim_dead]"
+When an end condition is met:
+- PICK ONLY ONE outcome
+- Add EXACTLY ONE of these tags at the END of your response (no others):
+  - If escaped: "[GAME_OVER: ESCAPED]"
+  - If player dies: "[GAME_OVER: PLAYER_DEAD]"
+  - If killer dies: "[GAME_OVER: KILLER_DEAD]"
+  - If killer restrained: "[GAME_OVER: KILLER_RESTRAINED]"
+  - If victim rescued: "[GAME_OVER: VICTIM_RESCUED]"
+  - If victim dies: "[GAME_OVER: VICTIM_DEAD]"
+
+CRITICAL: If multiple outcomes seem possible (e.g., "they could escape or die"), pick the MOST LIKELY based on the action and make that the definitive outcome. Do not add multiple tags. Do not hedge.
 
 NEVER:
 - "The killer remains unseen" after multiple encounters
@@ -264,9 +268,11 @@ NO vague atmosphere. NO "you sense danger." CONCRETE HORROR."""
         return response
     
     def _check_game_over(self, response: str) -> None:
-        """Check if the game has ended based on the response."""
+        """Check if the game has ended based on the response.
+        Only accepts the FIRST game-over tag found."""
         response_upper = response.upper()
         
+        # Only set game_over once - process in order and stop at first match
         if "[GAME_OVER: ESCAPED]" in response_upper:
             self.game_over = True
             self.game_outcome = "escaped"
