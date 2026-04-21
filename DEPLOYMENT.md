@@ -11,12 +11,21 @@ Your Flask app is ready to deploy! Here are the easiest options:
    - Push to GitHub: `git push -u origin main`
    - Go to Railway → New Project → Import from GitHub → Select your repo
 
-3. **Set Environment Variables** in Railway:
-   - Go to Variables
-   - Add `OPENAI_API_KEY=<your-api-key>`
-   - Add `FLASK_ENV=production`
+3. **Railway auto-detects Procfile and deployment settings**:
+   - The `Procfile` and `railway.json` in your repo tell Railway how to start your app
+   - No additional setup needed!
 
-4. **Deploy**: Click "Deploy" - Railway auto-deploys and gives you a public URL
+4. **Set Environment Variables** in Railway:
+   - Go to Project → Variables
+   - Add `OPENAI_API_KEY=<your-api-key>`
+
+5. **Deploy**: Railway auto-deploys and gives you a public URL
+
+**If Railway still shows "no start command":**
+- Go to Railway Project Settings
+- Find "Start Command" field
+- Paste: `python -m gunicorn web_app:app --bind 0.0.0.0:$PORT`
+- Save and redeploy
 
 ## Option 2: Render (Free Tier Available)
 
