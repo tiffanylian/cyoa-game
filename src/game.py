@@ -164,6 +164,10 @@ CURRENT TIME: 11:50 PM (3 minutes since the call went dead)
 
     def check_game_over(self) -> bool:
         """Check if the game should end."""
+        # Check if story generator says game is over
+        if self.story_generator.game_over:
+            return True
+        
         if self.game_state["health"] <= 0:
             print("\n💀 Your health has reached zero. You succumb to the darkness...\n")
             return True
@@ -219,9 +223,23 @@ CURRENT TIME: 11:50 PM (3 minutes since the call went dead)
 
     def display_end_stats(self):
         """Display final game statistics."""
+        outcome_messages = {
+            "escaped": "✓ ESCAPED: You made it out alive.",
+            "player_dead": "✗ KILLED: You were killed by the killer.",
+            "killer_dead": "✓ JUSTICE: You killed the killer.",
+            "killer_restrained": "✓ CAPTURED: You restrained the killer for backup.",
+            "victim_rescued": "✓ RESCUE: You saved the victim!",
+            "victim_dead": "✗ TOO LATE: The victim died.",
+        }
+        
         print("\n" + "=" * 60)
         print("FINAL STATISTICS")
         print("=" * 60)
+        
+        # Display outcome
+        if self.story_generator.game_outcome:
+            print(f"\nOUTCOME: {outcome_messages.get(self.story_generator.game_outcome, 'Unknown')}\n")
+        
         print(f"Final Health: {self.game_state['health']}/100")
         print(f"Final Sanity: {self.game_state['sanity']}/100")
         print(f"Total Turns: {self.game_state['turn']}")

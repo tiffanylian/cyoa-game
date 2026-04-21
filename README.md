@@ -30,10 +30,33 @@ An AI-powered horror detective game. You're a first responder arriving at an aba
    pip install -r requirements.txt
    ```
 
-4. Run the game:
+## How to Play
+
+### Web Version (Recommended)
+
+1. Run the Flask web server:
+   ```bash
+   python web_app.py
+   ```
+
+2. Open your browser and go to:
+   ```
+   http://localhost:5000
+   ```
+
+3. Click "Enter the Mansion" to start your adventure
+
+4. Describe your actions naturally in the text input:
+   ```
+   I carefully approach the front door and listen for sounds
+   ```
+
+### Terminal Version
+
+1. Run the game:
    ```bash
    cd src
-   python game.py
+   python main.py
    ```
 
 When prompted, you can either:

@@ -153,6 +153,23 @@ RESPONSE FORMAT:
 
 Example: "Your footsteps echo. Upstairs, something goes silent. Then you hear dragging sounds. A door slams open above. He KNOWS you're here."
 
+END GAME CONDITIONS:
+The game ends when ONE of these occurs:
+1. ESCAPED: Player drives away or flees the mansion successfully
+2. PLAYER_DEAD: Player is killed by the killer or dies from injuries
+3. KILLER_DEAD: Player kills/shoots the killer
+4. KILLER_RESTRAINED: Player restrains, handcuffs, or traps the killer
+5. VICTIM_RESCUED: Player rescues the victim and escapes with them alive
+6. VICTIM_DEAD: Victim dies (killed by killer or can't be saved)
+
+When an end condition is met, IMMEDIATELY add ONE of these to your response:
+- If escaped: "[GAME_OVER: escaped]"
+- If player dies: "[GAME_OVER: player_dead]"
+- If killer dies: "[GAME_OVER: killer_dead]"
+- If killer restrained: "[GAME_OVER: killer_restrained]"
+- If victim rescued: "[GAME_OVER: victim_rescued]"
+- If victim dies: "[GAME_OVER: victim_dead]"
+
 NEVER:
 - "The killer remains unseen" after multiple encounters
 - "You sense danger" without specifics
@@ -163,6 +180,8 @@ NEVER:
     def __init__(self, provider: AIProvider):
         self.provider = provider
         self.conversation_history = []
+        self.game_over = False
+        self.game_outcome = None
 
     def initialize_game(self) -> str:
         """Initialize the game with an opening scene."""
@@ -210,10 +229,36 @@ NO vague atmosphere. NO "you sense danger." CONCRETE HORROR."""
         # Generate response using full conversation history
         response = self.provider.generate_response("" + escalation, messages=self.conversation_history)
         
+        # Check for game over conditions
+        self._check_game_over(response)
+        
         # Store assistant response
         self.conversation_history.append({"role": "assistant", "content": response})
         
         return response
+    
+    def _check_game_over(self, response: str) -> None:
+        """Check if the game has ended based on the response."""
+        response_upper = response.upper()
+        
+        if "[GAME_OVER: ESCAPED]" in response_upper:
+            self.game_over = True
+            self.game_outcome = "escaped"
+        elif "[GAME_OVER: PLAYER_DEAD]" in response_upper:
+            self.game_over = True
+            self.game_outcome = "player_dead"
+        elif "[GAME_OVER: KILLER_DEAD]" in response_upper:
+            self.game_over = True
+            self.game_outcome = "killer_dead"
+        elif "[GAME_OVER: KILLER_RESTRAINED]" in response_upper:
+            self.game_over = True
+            self.game_outcome = "killer_restrained"
+        elif "[GAME_OVER: VICTIM_RESCUED]" in response_upper:
+            self.game_over = True
+            self.game_outcome = "victim_rescued"
+        elif "[GAME_OVER: VICTIM_DEAD]" in response_upper:
+            self.game_over = True
+            self.game_outcome = "victim_dead"
 
     def generate_ascii_for_scene(self, scene_description: str) -> str:
         """Generate ASCII art for a scene description."""

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mansion of Shadows - Horror Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏚️ MANSION OF SHADOWS 🏚️</h1>
+            <p>An AI-Powered Horror Adventure</p>
+        </header>
+
+        <main>
+            <!-- Briefing Section -->
+            <section id="briefing-section" class="briefing">
+                <div class="briefing-content">
+                    <h2>DISPATCH BRIEFING</h2>
+                    <pre>{{ briefing }}</pre>
+                    <button id="start-button" class="btn btn-primary">Enter the Mansion</button>
+                </div>
+            </section>
+
+            <!-- Game Section -->
+            <section id="game-section" class="game-container" style="display: none;">
+                <!-- Scene Display -->
+                <div class="scene-panel">
+                    <div id="scene-content" class="scene-text">
+                        <p>[Loading scene...]</p>
+                    </div>
+                </div>
+
+                <!-- Game Stats -->
+                <div class="stats-panel">
+                    <div class="stat">
+                        <label>TURN:</label>
+                        <span id="turn-counter">0</span>
+                    </div>
+                </div>
+
+                <!-- Player Input -->
+                <div class="input-panel">
+                    <form id="action-form" onsubmit="submitAction(event)">
+                        <input 
+                            type="text" 
+                            id="action-input" 
+                            placeholder="What do you do?" 
+                            autocomplete="off"
+                            disabled
+                        >
+                        <button type="submit" class="btn btn-action" disabled>Submit</button>
+                    </form>
+                </div>
+
+                <!-- Game Over Screen -->
+                <div id="game-over-screen" class="game-over" style="display: none;">
+                    <div class="game-over-content">
+                        <h2 id="outcome-title">GAME OVER</h2>
+                        <p id="outcome-message"></p>
+                        <button id="restart-button" class="btn btn-primary">Play Again</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading Indicator -->
+            <div id="loading-indicator" class="loading" style="display: none;">
+                <p>The story unfolds...</p>
+                <div class="spinner"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>An immersive AI-generated horror experience</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='game.js') }}"></script>
+</body>
+</html>
