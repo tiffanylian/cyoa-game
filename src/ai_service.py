@@ -259,14 +259,26 @@ NO vague atmosphere. NO "you sense danger." CONCRETE HORROR."""
         # Generate response using full conversation history
         response = self.provider.generate_response("" + escalation, messages=self.conversation_history)
 
-        # Only keep narrative up to and including the first [GAME_OVER: ...] tag
+
+        # Only keep narrative up to and including the first [GAME_OVER: ...] tag, and set the correct outcome
         import re
-        game_over_match = re.search(r"(.*?)(\[GAME_OVER: [A-Z_]+\])", response, re.DOTALL)
+        game_over_match = re.search(r"(.*?)(\[GAME_OVER: ([A-Z_]+)\])", response, re.DOTALL)
         if game_over_match:
             response = game_over_match.group(1) + game_over_match.group(2)
-
-        # Check for game over conditions
-        self._check_game_over(response)
+            # Set the correct game over outcome based on the first tag found
+            tag = game_over_match.group(3).lower()
+            self.game_over = True
+            self.game_outcome = {
+                "escaped": "escaped",
+                "player_dead": "player_dead",
+                "killer_dead": "killer_dead",
+                "killer_restrained": "killer_restrained",
+                "victim_rescued": "victim_rescued",
+                "victim_dead": "victim_dead"
+            }.get(tag, None)
+        else:
+            # Check for game over conditions as fallback
+            self._check_game_over(response)
 
         # Store assistant response
         self.conversation_history.append({"role": "assistant", "content": response})
