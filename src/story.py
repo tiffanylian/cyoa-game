@@ -347,11 +347,7 @@ In your rearview mirror, a figure stands silhouetted against the decrepit house,
 watching you leave. It makes no attempt to follow.
 
 As dawn breaks, you wonder if anyone would ever believe what happened in that house.
-More importantly, you wonder if you'll ever stop hearing that shriek in your nightmares.
-
-═══════════════════════════════════════════════════════════
-YOU HAVE ESCAPED. YOU ARE ALIVE. BUT AT WHAT COST?
-═══════════════════════════════════════════════════════════""",
+More importantly, you wonder if you'll ever stop hearing that shriek in your nightmares.""",
             ascii_art="""
   _______________
   |   FREEDOM    |
