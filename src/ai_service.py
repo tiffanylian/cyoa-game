@@ -2,6 +2,7 @@
 
 import os
 import json
+import re
 from typing import Optional, Dict, Any
 from abc import ABC, abstractmethod
 
@@ -261,6 +262,18 @@ NO vague atmosphere. NO "you sense danger." CONCRETE HORROR."""
         # Generate response using full conversation history
         response = self.provider.generate_response("" + escalation, messages=self.conversation_history)
 
+        # Hard rule: getting in the car and driving away is always an ESCAPED ending.
+        # This prevents incorrect end-state tags from the model.
+        if self._is_car_escape_action(user_action):
+            response_without_tags = re.sub(r"\s*\[GAME_OVER:\s*[A-Z_]+\]\s*", " ", response).strip()
+            if not response_without_tags:
+                response_without_tags = "You jump into your car, slam the door, and floor the accelerator into the night."
+            response = f"{response_without_tags} [GAME_OVER: ESCAPED]"
+            self.game_over = True
+            self.game_outcome = "escaped"
+            self.conversation_history.append({"role": "assistant", "content": response})
+            return response
+
         # Check if the player has met the killer for three turns without injuring them
         if self.killer_encounter_turns >= 3 and not self.killer_injured:
             self.game_over = True
@@ -268,7 +281,6 @@ NO vague atmosphere. NO "you sense danger." CONCRETE HORROR."""
             return "The killer strikes! You failed to act in time. [GAME_OVER: PLAYER_DEAD]"
 
         # Only keep narrative up to and including the first [GAME_OVER: ...] tag, and set the correct outcome
-        import re
         game_over_match = re.search(r"(.*?)\[GAME_OVER: ([A-Z_]+)\]", response, re.DOTALL)
         if game_over_match:
             narrative = game_over_match.group(1).strip()
@@ -292,6 +304,28 @@ NO vague atmosphere. NO "you sense danger." CONCRETE HORROR."""
         self.conversation_history.append({"role": "assistant", "content": response})
 
         return response
+
+    def _is_car_escape_action(self, user_action: str) -> bool:
+        """Return True when player clearly chooses to escape by car."""
+        text = user_action.lower().strip()
+
+        has_car = any(term in text for term in ["car", "vehicle", "truck", "van"]) 
+        has_escape_intent = any(
+            term in text
+            for term in [
+                "drive away",
+                "get in",
+                "jump in",
+                "escape",
+                "leave",
+                "flee",
+                "floor it",
+                "speed away",
+                "start the engine",
+            ]
+        )
+
+        return has_car and has_escape_intent
     
     def _check_game_over(self, response: str) -> None:
         """Check if the game has ended based on the response.
