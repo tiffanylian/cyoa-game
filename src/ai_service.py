@@ -212,6 +212,8 @@ NEVER:
         self.conversation_history = []
         self.game_over = False
         self.game_outcome = None
+        self.killer_encounter_turns = 0
+        self.killer_injured = False
 
     def initialize_game(self) -> str:
         """Initialize the game with an opening scene."""
@@ -259,14 +261,20 @@ NO vague atmosphere. NO "you sense danger." CONCRETE HORROR."""
         # Generate response using full conversation history
         response = self.provider.generate_response("" + escalation, messages=self.conversation_history)
 
+        # Check if the player has met the killer for three turns without injuring them
+        if self.killer_encounter_turns >= 3 and not self.killer_injured:
+            self.game_over = True
+            self.game_outcome = "player_dead"
+            return "The killer strikes! You failed to act in time. [GAME_OVER: PLAYER_DEAD]"
 
         # Only keep narrative up to and including the first [GAME_OVER: ...] tag, and set the correct outcome
         import re
-        game_over_match = re.search(r"(.*?)(\[GAME_OVER: ([A-Z_]+)\])", response, re.DOTALL)
+        game_over_match = re.search(r"(.*?)\[GAME_OVER: ([A-Z_]+)\]", response, re.DOTALL)
         if game_over_match:
-            response = game_over_match.group(1) + game_over_match.group(2)
-            # Set the correct game over outcome based on the first tag found
-            tag = game_over_match.group(3).lower()
+            narrative = game_over_match.group(1).strip()
+            tag = game_over_match.group(2).lower()
+            response = narrative + " [GAME_OVER: " + game_over_match.group(2) + "]"
+            # Set the game over outcome based on the first tag found
             self.game_over = True
             self.game_outcome = {
                 "escaped": "escaped",

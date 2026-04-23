@@ -65,6 +65,7 @@ class StoryManager:
             "sanity": 100,
             "choices_made": [],
         }
+        self.story = Story()
 
     def _build_story(self) -> Dict[str, Scenario]:
         """Build the complete story tree."""
@@ -324,7 +325,7 @@ YOU ARE TRAPPED. YOUR STORY ENDS HERE.
   ~~~~~~~~~~~~~~~~~~~
   ~  ~ ~~~~ ~ ~~  ~
   ~  ~~~  ~~~  ~~~  ~
-  ~ ~~  ╱╲ ╱╲ ╱╲  ~ ~
+  ~ ~~  ╱╲ ╱╲ ╲╱  ~ ~
   ~~~  ╱  ╲╱  ╲╱  ╲~~~
   ~~  ╱  👁╲  👁╱  👁╲~~ 
   ~~~~~~~~~~~~~~~~~~~~~~~
@@ -457,7 +458,7 @@ The journal ends abruptly in mid-sentence, the final entry smeared with what loo
  | ╱╲ ╱╲ ╱╲  |
  |╱  ╲╱  ╲╱  |
  |  [NOTES] |
- | ╱╲ ╱╲ ╱╲  |
+ | ╱╲ ╱╲ ╲╱  |
  |╱  ╲╱  ╲╱  |
  |___________|
 """,
@@ -690,3 +691,22 @@ GAME OVER. YOU HAVE JOINED THE HOUSE'S COLLECTION.
         """Get the current ending type if game is over."""
         current = self.get_current_scenario()
         return current.ending_type if current.is_ending else None
+
+
+class Story:
+    def __init__(self):
+        self.killer_encounter_turns = 0
+        self.killer_injured = False
+
+    def encounter_killer(self):
+        """Track the killer encounter and increment turns."""
+        self.killer_encounter_turns += 1
+
+    def injure_killer(self):
+        """Mark the killer as injured."""
+        self.killer_injured = True
+
+    def reset_killer_encounter(self):
+        """Reset killer encounter tracking."""
+        self.killer_encounter_turns = 0
+        self.killer_injured = False
